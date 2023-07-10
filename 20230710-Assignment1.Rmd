@@ -1,0 +1,56 @@
+---
+title: "R Notebook"
+output:
+  html_document:
+    df_print: paged
+---
+
+# Submission Info
+
+**Name:** Lan Phan
+
+**Course:** G5072 - Modern Data Structures
+
+*Monday, July 10, 2023*
+
+# Assignment 1
+
+**Instructions**
+
+Use R Notebook to create an html report that includes the following: 1. *italicized text*; 2. plot generated from R code chunk; 3. at least 2 main headers and at least one sub-header and 4. at least one link
+
+## Project Description
+
+The selected project and its data are posted on Tidy Tuesday on Github, a weekly social data project in R. Go [here](https://github.com/rfordatascience/tidytuesday) to learn more about *Tidy Tuesday*!
+
+According to the description of the [Coffee Rating Data](https://github.com/rfordatascience/tidytuesday/blob/master/data/2020/2020-07-07/readme.md) on Github, "the data comes from Coffee Quality Database courtesy of Buzzfeed Data Scientist James LeDoux... These data were collected from the Coffee Quality Institute's review pages in January 2018."
+
+
+## Random Plot
+
+I will use the *cars* data set for convenience. 
+
+
+```{r packages}
+library(tidyverse)
+library(dplyr)
+```
+
+The original example
+
+```{r}
+plot(cars)
+```
+New plot
+
+```{r}
+cars %>%
+  ggplot(mapping = aes(x = dist, y = speed)) +
+  geom_line(color = "gray70") + 
+  geom_smooth(size = 1.1, method = "loess", se = FALSE) + #smooth the curve
+  labs(x = "Distance",
+       y = "Speed",
+       title = "Plot from cars dataset")
+```
+
+
