@@ -1,0 +1,99 @@
+---
+title: "S5072 Assignment 5"
+author: "Lan Phan"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    toc: TRUE
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Instructions
+
+Your final document should be an html file knitted using RMarkdown.   The file should be uploaded to this assignment on the course website.  
+
+In answering each of the following questions please include a) the question as a header in your Rmarkdown report, b) then include the raw code that you used to generate your results, and c) the top ten rows/values/or elements of any resulting dataframe, vector, or list created in your results.
+
+## Import packages
+```{r}
+library("devtools")
+devtools::install_github("klutometis/roxygen")
+library(roxygen2)
+library(tidyverse)
+library(dplyr)
+```
+
+
+
+## Data Import
+
+Use the “Seasons_Stats_NBA.csv” dataset located in the class 2 folder and the R script "Intro to R package creation_quick start guide.R" in the class 6 file folder to answer the following questions.
+
+(Questions 1-4 do not require demonstrations in your final report.  Your final report should contain a link to the Github repo where you saved your package files AND demonstrate each function from your library along with its output per question 5).
+
+```{r}
+nba.dat <- read_csv("Seasons_Stats_NBA.csv")
+nba.dat
+```
+
+# Response
+
+First, we create a package directory to store all of our functions
+
+```{r}
+setwd("C:/Users/hoang/OneDrive/Desktop/Academics/Github-R-Codes/ModernDataStructures")
+create("nbafunction")
+```
+
+
+## Q1
+
+Create three functions and save them into individual R scripts (.R files).  
+
+**Function 1:** 
+Your input for this function should be an individual year.  Your output should be a data point of interest in the dataset for some player.
+
+I will choose the team they were playing for as the data point of interest.
+
+
+**Function 2:** 
+Your input for this function should be an individual year.  Your output should be the oldest player in the NBA data for that year (if multiple players have the same age, then decide how to return a single player).
+
+I will return the oldest player alphabetically.
+
+
+**Function 3:** 
+Your input for this function should be an individual year.  Your function should limit the data for that year to include numeric continuous variables only (not categorical data).  Your output should be the correlation matrix for all numeric variables in the data for that year.  (Hint: use cor(data) to create correlation matrix.  If you feel adventuresome, then you can return a correlogram plot from here instead).
+
+
+2. Create a package using the create function.  Save these .R files into the /R folder of your package.  Add roxygen documentation to the top of all .R functions.  Use the document() function to auto-create documentation for all functions.  Create a data/ folder in your package folder to share the NBA data with end users.  (Or use internal data, either way is fine as long as your data is accessible to your package functions.)
+
+Save the full nba data object to the data/ folder.  After you save the new data in the data/ folder rerun the document() function to document your data.
+
+Install your package locally.  
+
+
+3. Start a new publicly available repository on your Github account.  Drag and drop all of the files and folders in your package folder into the upload functionality of your new repository.
+
+4. Use the Install github function to install your package in R.  
+
+
+5. Run each of the functions to ensure that they are working correctly in R
+
+First function finds the team that each player was in that specific year. 
+```{r}
+find_team(1996)
+```
+
+Second function returns the oldest player of that year.
+```{r}
+oldest_player(1997)
+```
+
+Final function returns the correlogram of that year. 
+```{r}
+corr_year(1998)
+```
