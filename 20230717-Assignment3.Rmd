@@ -1,0 +1,150 @@
+---
+title: "S5072 Assignment 3"
+author: "Lan Phan"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    toc: TRUE
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Instructions
+
+Your final document should be an html file knitted using RMarkdown.   The file should be uploaded to this assignment on the course website.  
+
+In answering each of the following questions please include a) the question as a header in your Rmarkdown report, b) then include the raw code that you used to generate your results, and c) the top ten rows/values/or elements of any resulting dataframe, vector, or list created in your results.
+
+```{r packages}
+library(dplyr)
+library(tidyverse)
+```
+
+## Data Import
+
+Use the “flights” dataset in the “nycflights13” library to answer the following questions
+
+```{r load data}
+library(nycflights13)
+flights
+```
+
+
+# Answers
+
+## Q1
+
+**Part A** Write a function that takes a single numerical vector and returns three values, the minimum number, the median, and the maximum number of the vector.  
+
+```{r}
+summ_func <- function(x){
+  min_num <- min(x, na.rm = TRUE)
+  med_num <- median(x, na.rm = TRUE)
+  max_num <- max(x, na.rm = TRUE)
+  (result <- c(min_num, med_num, max_num))
+}
+```
+
+Test your function using the month column of the flights dataset.
+
+```{r}
+summ_func(flights$month)
+```
+
+
+**Part B** Explain your reasoning for choosing your function’s name
+
+I chose the function's name as summ_func as it provides 3 points of data that summarizes the vector. The "_func" is to help identify that it was a function I created instead of other R functions such as "summarise."
+
+## Q2 
+
+**Part A**
+
+Write a function that categorizes a numerical variable in the flights data into four categories: 
+
+The function should have two arguments.  The first should represent the tibble data frame object and the second should represent a column name in the data frame.  
+
+The function should first limit the data to include the column name only.  Then it should categorize the column into four categories in the following manner.
+
+For any particular variable in the flights data that represents military time (i.e.-0 to 2400 where 1200 represents 12 in the afternoon and 2400 represents midnight), the function should classify values into four categories:
+
+"Morning" for values from 5 am to 11:59 am 
+
+"Afternoon" for values from 12 pm to 4:59 pm
+
+"Evening" for values from 5 pm to 8:59 pm
+
+"Night"  for values from 9 pm to 4:59 am
+
+Test your function using the dep_time column of the flights dataset.
+
+(HINT: Use mutate with case_when statements to create categories.  Or alternatively you could also use data$columnname[which(data$columnname<=some_value_here)]<-"Morning")
+
+
+```{r}
+categorize_military <- function(df, columnname) {
+  df %>%
+    mutate(
+      time_category = case_when(
+        #using between is faster than the symbols in this case
+        between({{columnname}}, 500, 1159) ~ "Morning", 
+        between({{columnname}}, 1200, 1659) ~ "Afternoon",
+        between({{columnname}}, 1700, 2059) ~ "Evening",
+        between({{columnname}}, 2100, 2400) ~ "Night",
+        between({{columnname}}, 0, 459) ~ "Night")
+    )
+}
+```
+
+
+
+```{r}
+categorize_military(flights, dep_time)
+```
+
+
+
+
+**Part B** Explain your reasoning for choosing your function’s name
+
+The function asked to categorize the military time into character vectors that indicate what time of day, thus, the function name is categorize_military.
+
+## Q3
+
+**Part A**
+
+Write a function that calculates the median of all numeric variables in the flights dataset using a for loop.  
+
+(HINT: There are several ways to subset to numeric values only.  Given that we haven't walked through the automated ways to do this yet I'll give you the first step in this answer:
+
+flights_numeric_vars<-select_if(flights, is.numeric)
+
+```{r}
+
+median_df <- function(df){
+  
+  flights_numeric_vars<-select_if(df, is.numeric)
+  
+  output <- vector("double", ncol(flights_numeric_vars))
+  
+  for (i in seq_along(flights_numeric_vars)){
+    output[[i]] <- median(flights_numeric_vars[[i]])
+  }
+  output
+}
+```
+
+```{r}
+median_df(flights)
+```
+
+ 
+ **Part B**
+ 
+ Explain your reasoning for choosing your function’s name
+ 
+ The function name is median_df as it calculates and returns the median for multiple columns of a dataframe (instead of a vector).
+ 
+ 

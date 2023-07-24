@@ -1,0 +1,140 @@
+---
+title: "S5072 Assignment 4"
+author: "Lan Phan"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    toc: TRUE
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Instructions
+
+Your final document should be an html file knitted using RMarkdown. The file should be uploaded to this assignment on the course website.
+
+In answering each of the following questions please include a) the question as a header in your Rmarkdown report, b) then include the raw code that you used to generate your results, and c) the top ten rows/values/or elements of the resulting dataframe, vector, or list created in your results.
+
+```{r load packages}
+library(tidyverse)
+library(dplyr)
+```
+
+
+## Data Import
+
+Use the Aimes housing prices data set in the class 5 folder to answer the following questions.
+
+```{r}
+aimes_dat <- read_csv("Housing_prices_data.csv")
+```
+
+
+# Answers
+
+## Q1  
+
+Convert the data to a tibble data-frame.  
+
+```{r}
+# already converted to a tibble data frame when using read_csv
+class(aimes_dat)
+```
+
+Use one or more functions from the Purrr package that subsets list data to subset columns in the data to three unique datasets.  The first should include columns that are factors only (i.e. - categorical data), the second should include columns that are numeric only, and the third should include columns with logical values only.  
+
+(Hint: Remember that data-frames can be thought of as column-wise lists, so think of each column in your data-frame as a vector in a list that purrr functions like "keep" or "discard" will subset.  Also note that you can test variable type using functions like is.numeric(), is.factor(), or is.character())
+
+
+```{r}
+#first subset
+keep(aimes_dat, ~all(sapply(., is.factor))) #producing nothing, will try is character
+
+keep(aimes_dat, ~all(sapply(., is.character))) 
+
+#second
+keep(aimes_dat, ~all(sapply(., is.numeric)))
+
+# third
+keep(aimes_dat, ~all(sapply(., is.logical))) # is this because the responses are Y and N instead of T or F
+```
+
+
+
+## Q2
+
+Using the second dataset from question #1, calculate column means with one of the apply functions.
+
+```{r}
+# create an object for the 2nd dataset
+aimes_num_dat <- keep(aimes_dat, ~all(sapply(., is.numeric)))
+
+#calculate column means 
+apply(aimes_num_dat, 2, mean)
+
+#looks messy, time to round up
+round(apply(aimes_num_dat, 2, mean),2)
+```
+
+## Q3
+
+Using the second dataset from question #1, create a new dataset that only includes the variable indicating sales price (variable name is "SalePrice").
+
+```{r}
+aimes_q3 <- aimes_dat %>%
+  transmute(SalePrice = SalePrice)
+```
+
+
+Search for a categorical variable in the full dataset that you think may be related to the sales price of houses.
+
+Use the split function to subset this data into a list containing a single dataset for each category of your data.
+
+(Hint: Use split(data_with_sales_price,originaldata$categorical_variable) to split data into list of datasets by each category)
+
+```{r}
+# I will select neighborhood as a variable potentially related to sales price
+
+neighborhood_dat <- split(aimes_q3, aimes_dat$Neighborhood)
+```
+
+
+Create column means for each column of the sales price variable using the colMeans function with one of the map functions on this list.  
+
+```{r}
+map(neighborhood_dat, colMeans)
+```
+
+
+## Q4 
+
+Convert the full original housing dataset to a tibble data frame and then convert the tibble data frame to a list using as.list(). 
+
+```{r}
+aimes_list <- as.list(aimes_dat)
+```
+
+
+Subset the list into two unique lists: 1) a new list that includes a single list element that captures the original sales price variable from the Aimes houses data (variable name is "SalePrice").  
+
+```{r}
+head(aimes_list$SalePrice,20) #put head so it won't print the entire thing
+
+sp_list <- aimes_list$SalePrice
+```
+2) a new list that includes a single list element that captures a variable measuring the building type of each home from the Aimes houses data (variable name is "BldgType").
+
+```{r}
+head(aimes_list$BldgType,20)
+
+bt_list <- aimes_list$BldgType
+```
+
+Lastly, create one more list that appends the the list with building type data to the list with sales price data.
+
+```{r}
+final_list <- append(sp_list, bt_list)
+```
+
